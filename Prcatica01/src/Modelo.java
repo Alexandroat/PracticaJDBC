@@ -299,10 +299,10 @@ public class Modelo extends Conexion {
 }
 
 	public void addAnswer_question (Question question, Answer answer, Answer answer2){
+		
+		addQuestion(question);
 		addAnswer(answer);
 		addAnswer(answer2);
-		//addQuestion(question);
-		
 		
 	}
 	
