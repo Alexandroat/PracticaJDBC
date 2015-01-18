@@ -80,6 +80,11 @@ public class Modelo extends Conexion {
 		return res;
 	}
 
+	/**
+	 * Adds the Foreign key in the table Answer
+	 * 
+	 * @return res
+	 */
 	public boolean alterTableAnswer() {
 		boolean res = false;
 
@@ -95,7 +100,12 @@ public class Modelo extends Conexion {
 		}
 		return res;
 	}
-	
+
+	/**
+	 * Adds the Foreign key in the table Question
+	 * 
+	 * @return res
+	 */
 	public boolean alterTableQuestion() {
 		boolean res = false;
 
@@ -112,61 +122,11 @@ public class Modelo extends Conexion {
 		return res;
 	}
 
-	public void printTestInfo() {
-		ResultSet res = null;
-		try {
-			PreparedStatement pstm = this.getConexion().prepareStatement(
-					"SELECT _id FROM TEST");
-			res = pstm.executeQuery();
-			ResultSetMetaData rsm = (ResultSetMetaData) res.getMetaData();
-
-			while (res.next()) {
-				for (int i = 1; i <= rsm.getColumnCount(); i++) {
-					System.out.println(rsm.getColumnLabel(i) + ": "
-							+ res.getObject((rsm.getColumnLabel(i))));
-				}
-			}
-
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		} finally {
-			if (res != null)
-				try {
-					res.close();
-				} catch (SQLException e) {
-					System.err.println(e.getMessage());
-				}
-		}
-	}
-
-	public void printUser() {
-		ResultSet res = null;
-
-		try {
-			PreparedStatement pstm = this.getConexion().prepareStatement(
-					"SELECT * FROM USER");
-			res = pstm.executeQuery();
-
-			ResultSetMetaData rsm = (ResultSetMetaData) res.getMetaData();
-
-			while (res.next()) {
-				for (int i = 1; i <= rsm.getColumnCount(); i++) {
-					System.out.println(rsm.getColumnLabel(i) + ": "
-							+ res.getObject((rsm.getColumnLabel(i))));
-				}
-			}
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		} finally {
-			if (res != null)
-				try {
-					res.close();
-				} catch (SQLException e) {
-					System.err.println(e.getMessage());
-				}
-		}
-	}
-	
+	/**
+	 * Gets the answer of a question from the Database
+	 * 
+	 * @param text
+	 */
 	private void printAnswer(String text) {
 		String q = "SELECT Text, Is_correct FROM ANSWER WHERE Question_id = (SELECT _id FROM  QUESTION WHERE Text = ?)";
 		ResultSet res = null;
@@ -195,70 +155,55 @@ public class Modelo extends Conexion {
 		}
 	}
 
-	public void printQuestion() {
-		ResultSet res = null;
-		try {
-			PreparedStatement pstm = this.getConexion().prepareStatement(
-					"SELECT * FROM QUESTION");
-			res = pstm.executeQuery();
-			ResultSetMetaData rsm = (ResultSetMetaData) res.getMetaData();
+	/**
+	 * Adds a new Question into the Database
+	 * 
+	 * @param question
+	 */
+	private void addQuestion(Question question) {
 
-			while (res.next()) {
-				for (int i = 1; i <= rsm.getColumnCount(); i++) {
-					System.out.println(rsm.getColumnLabel(i) + ": "
-							+ res.getObject((rsm.getColumnLabel(i))));
-				}
-			}
+		PreparedStatement pstm = null;
+		String q = " INSERT INTO QUESTION (Text, Test_id) VALUES (?, ?) ";
+
+		try {
+			pstm = this.getConexion().prepareStatement(q);
+			pstm.setString(1, question.getText());
+			pstm.setInt(2, question.getTest_id());
+			pstm.execute();
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		} finally {
-			if (res != null)
+			if (pstm != null)
 				try {
-					res.close();
+					pstm.close();
 				} catch (SQLException e) {
 					System.err.println(e.getMessage());
 				}
 		}
 	}
-	
 
-	private void addQuestion(Question question) {
-		
-			PreparedStatement pstm = null;
-			String q = " INSERT INTO QUESTION (Text, Test_id) VALUES (?, ?) ";
-
-			try {
-				pstm = this.getConexion().prepareStatement(q);
-				pstm.setString(1, question.getText());
-				pstm.setInt(2, question.getTest_id());
-				pstm.execute();
-				
-			} catch (SQLException e) {
-				System.err.println(e.getMessage());
-			} finally {
-				if (pstm != null)
-					try {
-						pstm.close();
-					} catch (SQLException e) {
-						System.err.println(e.getMessage());
-					}
-			}
-	}
-	private int getAutoIncrementQuestion (){
+	/**
+	 * Gets the number that the Database is going to assign to the Question's id
+	 * 
+	 * @return
+	 */
+	private int getAutoIncrementQuestion() {
 		ResultSet res = null;
 		int antoincrement = 0;
 		try {
-			PreparedStatement pstm = this.getConexion().prepareStatement(
-					"SELECT AUTO_INCREMENT FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Quizit' AND  TABLE_NAME = 'QUESTION'");
+			PreparedStatement pstm = this
+					.getConexion()
+					.prepareStatement(
+							"SELECT AUTO_INCREMENT FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Quizit' AND  TABLE_NAME = 'QUESTION'");
 			res = pstm.executeQuery();
 			ResultSetMetaData rsm = (ResultSetMetaData) res.getMetaData();
-			
+
 			while (res.next()) {
 				for (int i = 1; i <= rsm.getColumnCount(); i++) {
 					antoincrement = res.getInt((rsm.getColumnLabel(i)));
 				}
-			}	
+			}
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -272,20 +217,25 @@ public class Modelo extends Conexion {
 		}
 		return antoincrement;
 	}
-	
+
+	/**
+	 * Adds a new answer to the Database
+	 * 
+	 * @param answer
+	 */
 	private void addAnswer(Answer answer) {
-		
+
 		PreparedStatement pstm = null;
 		String q = "INSERT INTO ANSWER (Text, Is_correct, Question_id) VALUES ( ? ,? ,?) ";
 
 		try {
 			pstm = this.getConexion().prepareStatement(q);
-			
+
 			pstm.setString(1, answer.getText());
 			pstm.setBoolean(2, answer.getIs_correct());
-			pstm.setInt(3, getAutoIncrementQuestion()-1);
+			pstm.setInt(3, getAutoIncrementQuestion() - 1);
 			pstm.execute();
-			
+
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 		} finally {
@@ -296,23 +246,38 @@ public class Modelo extends Conexion {
 					System.err.println(e.getMessage());
 				}
 		}
-}
+	}
 
-	public void addAnswer_question (Question question, Answer answer, Answer answer2){
-		
+	/**
+	 * Creates a new Question with 2 answers
+	 * 
+	 * @param question
+	 * @param answer
+	 * @param answer2
+	 */
+	public void addAnswer_question(Question question, Answer answer,
+			Answer answer2) {
+
 		addQuestion(question);
 		addAnswer(answer);
 		addAnswer(answer2);
-		
+
 	}
-	
-	public void printTest(int id_test){
+
+	/**
+	 * Prints all the questions and answers that the test has and indicates
+	 * which answers are true
+	 * 
+	 * @param id_test
+	 */
+	public void printTest(int id_test) {
 		String q = "SELECT Text FROM QUESTION WHERE Test_id = (SELECT _id FROM  TEST WHERE _id = ?)";
 		String text = "";
 		ResultSet res = null;
-	
+		PreparedStatement pstm = null;
+
 		try {
-			PreparedStatement pstm = this.getConexion().prepareStatement(q);
+			pstm = this.getConexion().prepareStatement(q);
 			pstm.setInt(1, id_test);
 			res = pstm.executeQuery();
 
@@ -331,33 +296,40 @@ public class Modelo extends Conexion {
 			if (res != null)
 				try {
 					res.close();
+					pstm.close();
 				} catch (SQLException e) {
 					System.err.println(e.getMessage());
 				}
 		}
 	}
-	
-	public void createNewTest (String nameTest){
+
+	/**
+	 * Creates a new Test
+	 * 
+	 * @param nameTest
+	 */
+	public void createNewTest(String nameTest) {
 		Random rand = new Random();
-		
+
 		String q = "INSERT INTO TEST ( _id, Name, Date, Score, Number_questions) VALUES (NULL, ?, CURRENT_DATE(), '0', '0')";
-		
-		String q2 ="UPDATE QUESTION SET Test_id = (SELECT _id FROM TEST WHERE  Name = ?) WHERE _id = ?";
-		
+
+		String q2 = "UPDATE QUESTION SET Test_id = (SELECT _id FROM TEST WHERE  Name = ?) WHERE _id = ?";
+
 		ResultSet res = null;
 		ResultSet res2 = null;
+		PreparedStatement pstm = null;
+		PreparedStatement pstm2 = null;
 		try {
-			PreparedStatement pstm = this.getConexion().prepareStatement(q);
-			
+			pstm = this.getConexion().prepareStatement(q);
+
 			pstm.setString(1, nameTest);
 			pstm.execute();
-			
-			PreparedStatement pstm2 = this.getConexion().prepareStatement(q2);
+
+			pstm2 = this.getConexion().prepareStatement(q2);
 			pstm2.setString(1, nameTest);
 			pstm2.setInt(2, rand.nextInt(numColums()));
-			
+
 			pstm2.execute();
-			
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -365,15 +337,21 @@ public class Modelo extends Conexion {
 			if (res != null)
 				try {
 					res.close();
-					
+					pstm.close();
+					pstm2.close();
 					res2.close();
 				} catch (SQLException e) {
 					System.err.println(e.getMessage());
 				}
 		}
 	}
-	
-	public int numColums (){
+
+	/**
+	 * Gets the number of columns of the Question table
+	 * 
+	 * @return
+	 */
+	private int numColums() {
 		ResultSet res = null;
 		int num_co = 0;
 		try {
@@ -381,12 +359,12 @@ public class Modelo extends Conexion {
 					"SELECT count(_id) FROM QUESTION");
 			res = pstm.executeQuery();
 			ResultSetMetaData rsm = (ResultSetMetaData) res.getMetaData();
-			
+
 			while (res.next()) {
 				for (int i = 1; i <= rsm.getColumnCount(); i++) {
 					num_co = res.getInt((rsm.getColumnLabel(i)));
 				}
-			}	
+			}
 
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -400,9 +378,9 @@ public class Modelo extends Conexion {
 		}
 		return num_co;
 	}
-	
-	public void startTest (String user, String test){
-		
+
+	public void startTest(String user, String test) {
+
 	}
 
 }

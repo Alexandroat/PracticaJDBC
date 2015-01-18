@@ -14,7 +14,7 @@ public class Vista {
 			try {
 				do {
 					System.out
-							.println("\nSelecciona una opción (solo números 1-5)");
+							.println("\nSelecciona una opci√≥n (solo n√∫meros 1-5)");
 					System.out.println("1-Introducir nueva pregunta y respuestas");
 					System.out.println("2-Mostrar todas las preguntas y respuestas de un test");
 					System.out.println("3-crear un nuevo test con 5 preguntas aleatorias");
@@ -24,7 +24,7 @@ public class Vista {
 					switch (option()) {
 					case 2:
 						Scanner scanner = new Scanner(System.in);
-						System.out.println("Introduzca el número del tes del cual desea ver sus preguntas y respuestas");
+						System.out.println("Introduzca el n√∫mero del test del cual desea ver sus preguntas y respuestas");
 						int Test = scanner.nextInt();
 						modelo.printTest(Test);
 						break;
@@ -48,7 +48,7 @@ public class Vista {
 						System.out.println("Escriba 'true' si es la respuesta verdadera o 'false' si no lo es :");
 						boolean is_true2 = scanner1.nextBoolean();
 						
-						modelo.addAnswer_question(new Question(question, numTest), new Answer(answer,is_true), new Answer(answer2, is_true));
+						modelo.addAnswer_question(new Question(question, numTest), new Answer(answer,is_true), new Answer(answer2, is_true2));
 
 						break;
 					case 3:

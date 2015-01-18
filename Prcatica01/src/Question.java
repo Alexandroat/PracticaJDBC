@@ -5,7 +5,7 @@ public class Question implements Serializable{
 	
 private static final long serialVersionUID = 1L;
 
-private int id;
+
 private String text;
 private int Test_id;
 public Question(String text, int test_id) {
@@ -15,14 +15,6 @@ public Question(String text, int test_id) {
 
 public Question(){
 	
-}
-
-public int getId() {
-	return id;
-}
-
-public void setId(int id) {
-	this.id = id;
 }
 
 public String getText() {

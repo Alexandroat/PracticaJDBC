@@ -9,14 +9,15 @@ public class Conexion {
 	private Connection conn = null;
 
 	public Conexion() {
-		//System.out.println("Conexion");
+		System.out.println("Cenectando...");
 		try {
 
 			Class.forName(DRIVER);
 
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:8889/Quizit", "Quizit", "Quizit");
+			conn = DriverManager.getConnection(
+					"jdbc:mysql://localhost:8889/Quizit", "Quizit", "Quizit");
 			if (conn != null) {
-				//System.out.println("Conexion Establecida");
+				System.out.println("---Conexion Establecida---");
 			} else {
 				System.err
 						.println("No se ha podido establecer la conexion con el servidor");

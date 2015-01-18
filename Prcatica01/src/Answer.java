@@ -5,7 +5,6 @@ public class Answer implements Serializable{
 
 private static final long serialVersionUID = 1L;
 
-private int id;
 private String text;
 private boolean Is_correct;
 private int Question_id;
@@ -18,14 +17,6 @@ public Answer(String text, boolean is_correct) {
 
 public Answer(){
 	
-}
-
-public int getId() {
-	return id;
-}
-
-public void setId(int id) {
-	this.id = id;
 }
 
 public String getText() {
